@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import { Button } from "@/shared/ui/Button";
-import { AlertIcon } from "@/shared/ui/icons";
+import { AlertIcon, WifiOffIcon } from "@/shared/ui/icons";
 import type { Breed } from "../schemas/breed.schema";
 import { BreedRow } from "./BreedRow";
 import { BreedRowSkeleton } from "./BreedListSkeleton";
@@ -18,6 +18,7 @@ type Props = {
   isFetchNextPageError: boolean;
   nextPage: number;
   query?: string;
+  isOffline?: boolean;
   onLoadMore: () => void;
 };
 
@@ -28,6 +29,7 @@ export function BreedList({
   isFetchNextPageError,
   nextPage,
   query = "",
+  isOffline = false,
   onLoadMore,
 }: Props) {
   const listRef = useRef<HTMLUListElement>(null);
@@ -60,7 +62,7 @@ export function BreedList({
 
   const items = virtualizer.getVirtualItems();
   const lastRenderedIndex = items.at(-1)?.index ?? -1;
-  const canLoadMore = hasNextPage && !isFetchingNextPage && !isFetchNextPageError;
+  const canLoadMore = hasNextPage && !isFetchingNextPage && !isFetchNextPageError && !isOffline;
 
   useEffect(() => {
     if (canLoadMore && lastRenderedIndex >= breeds.length - LOAD_MORE_THRESHOLD)
@@ -132,6 +134,13 @@ export function BreedList({
                   <Button variant="primary" onClick={onLoadMore}>
                     Reintentar ahora
                   </Button>
+                </div>
+              ) : isOffline ? (
+                <div className="flex h-full items-center py-2">
+                  <p className="flex h-full w-full items-center gap-3 rounded-xl border border-dashed border-line-strong px-4 text-sm text-ink-muted">
+                    <WifiOffIcon className="size-[18px] shrink-0" />
+                    Carga de la página {nextPage} en pausa hasta recuperar la conexión.
+                  </p>
                 </div>
               ) : (
                 <BreedRowSkeleton />

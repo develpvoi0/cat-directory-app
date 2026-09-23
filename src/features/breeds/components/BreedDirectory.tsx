@@ -3,9 +3,12 @@
 import { useCallback, useEffect, useRef } from "react";
 import { Button } from "@/shared/ui/Button";
 import { CatSilhouette } from "@/shared/ui/CatSilhouette";
+import { useOnlineStatus } from "@/shared/hooks/useOnlineStatus";
+import { getErrorMessage } from "@/shared/lib/error-messages";
 import { AlertIcon } from "@/shared/ui/icons";
 import { useBreedsInfinite } from "../hooks/useBreedsInfinite";
 import { useBreedSearch } from "../hooks/useBreedSearch";
+import { usePersistedFirstPage } from "../hooks/usePersistedFirstPage";
 import { useSyncDirectoryUrl } from "../hooks/useSyncDirectoryUrl";
 import { useDirectoryUI } from "../state/DirectoryUIProvider";
 import { BreedList } from "./BreedList";
@@ -32,15 +35,17 @@ function LoadProgress({ loaded, total, className = "" }: { loaded: number; total
 
 export function BreedDirectory() {
   const {
-    breeds, total, loadedPages, lastPage, failureCount, hasNextPage, fetchNextPage,
-    isFetchingNextPage, isFetchNextPageError, isPending, isError, refetch,
+    breeds, total, firstPage, loadedPages, lastPage, failureCount, hasNextPage, fetchNextPage,
+    isFetchingNextPage, isFetchNextPageError, isPending, isError, error, refetch,
   } = useBreedsInfinite();
+  const isOnline = useOnlineStatus();
   const { query, clearSearch } = useDirectoryUI();
   const matches = useBreedSearch(breeds, query);
   const sectionRef = useRef<HTMLElement>(null);
   const previousQuery = useRef(query);
 
   useSyncDirectoryUrl({ query, page: loadedPages });
+  usePersistedFirstPage(firstPage);
 
   useEffect(() => {
     if (previousQuery.current === query) return;
@@ -69,7 +74,7 @@ export function BreedDirectory() {
         <AlertIcon className="size-7 text-danger" />
         <p className="font-display text-xl font-bold">No pudimos cargar el directorio</p>
         <p className="text-[15px] text-ink-muted">
-          Revisa tu conexión. Ya lo intentamos varias veces sin éxito.
+          {getErrorMessage(error)} Lo intentamos varias veces antes de mostrarte este aviso.
         </p>
         <Button variant="primary" className="mt-3 self-start" onClick={() => refetch()}>
           Reintentar ahora
@@ -95,11 +100,18 @@ export function BreedDirectory() {
         </div>
       </div>
 
+      {isError && !isFetchNextPageError && (
+        <p role="status" className="mt-4 rounded-xl border border-line bg-surface px-4 py-3 text-sm text-ink-muted">
+          <strong className="text-ink">No pudimos actualizar la lista.</strong> Mostramos las razas que ya
+          teníamos guardadas; se actualizarán en cuanto el servicio responda.
+        </p>
+      )}
+
       <p aria-live="polite" className="mt-3.5 min-h-[22px] text-sm text-ink-muted">
         {query && (
           <>
             <strong className="font-bold text-ink">{matchLabel}</strong> en {breeds.length} de {total} razas.
-            {hasNextPage && " Seguimos cargando el resto."}
+            {hasNextPage && (isOnline ? " Seguimos cargando el resto." : " Buscaremos en el resto al reconectar.")}
           </>
         )}
       </p>
@@ -142,6 +154,7 @@ export function BreedDirectory() {
         isFetchNextPageError={isFetchNextPageError}
         nextPage={nextPage}
         query={query}
+        isOffline={!isOnline}
         onLoadMore={loadMore}
       />
 

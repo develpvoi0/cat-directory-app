@@ -1,25 +1,11 @@
 "use client";
 
 import { useId, type ReactNode } from "react";
-import {
-  CAT_CHEEKS,
-  CAT_EYES,
-  CAT_EYE_SHINES,
-  CAT_EYE_SPARKLES,
-  CAT_HEAD_BOX,
-  CAT_HEAD_PATH,
-  CAT_HIGHLIGHT_PATHS,
-  CAT_MOUTH_PATH,
-  CAT_NOSE_SHINE,
-  CAT_OUTLINE_PATH,
-  CAT_SHADOW_PATH,
-  CAT_VIEW_BOX,
-  CAT_WHISKER_PATHS,
-} from "@/shared/ui/cat-shape";
+import { CAT_HEAD_BOX, CAT_VIEW_BOX } from "@/shared/ui/cat-shape";
+import { CAT_SPRITE } from "@/shared/ui/cat-sprite-ids";
 import type { Breed } from "../schemas/breed.schema";
 import { coatColorFor, patternFamily, type CoatColor, type PatternFamily } from "../utils/coat";
 
-const LINE = "#000072";
 const OUTLINE_CLASS = "fill-[#000072] dark:fill-[#c3c9f5]";
 const WHITE_FUR = "#f6f2ea";
 const POINT_CREAM = "#efe6d8";
@@ -143,7 +129,7 @@ export function CoatFace({ family, coat, className = "" }: CoatFaceProps) {
       {/* Aqui hacemos la silueta de la cabeza del gato */}
       <defs>
         <clipPath id={`${id}-head`}>
-          <path d={CAT_HEAD_PATH} />
+          <use href={CAT_SPRITE.head} />
         </clipPath>
       </defs>
 
@@ -152,28 +138,8 @@ export function CoatFace({ family, coat, className = "" }: CoatFaceProps) {
         {furLayers(family, coat, id)}
       </g>
 
-      <path d={CAT_SHADOW_PATH} fill={LINE} opacity="0.15" />
-      {CAT_HIGHLIGHT_PATHS.map((d) => (
-        <path key={d} d={d} fill="#ffffff" opacity="0.35" />
-      ))}
-      {CAT_CHEEKS.map((cheek) => (
-        <ellipse key={cheek.cx} {...cheek} fill="#ff92b4" opacity="0.85" />
-      ))}
-      {CAT_EYES.map((eye) => (
-        <ellipse key={eye.cx} {...eye} fill={LINE} />
-      ))}
-      {CAT_EYE_SHINES.map((shine) => (
-        <ellipse key={shine.cx} {...shine} fill="#ffffff" />
-      ))}
-      {CAT_EYE_SPARKLES.map((sparkle) => (
-        <ellipse key={sparkle.cx} {...sparkle} fill="#ffffff" opacity="0.35" />
-      ))}
-      <path d={CAT_MOUTH_PATH} fill={LINE} />
-      <ellipse {...CAT_NOSE_SHINE} fill="#ffffff" />
-      {CAT_WHISKER_PATHS.map((d) => (
-        <path key={d} d={d} className={OUTLINE_CLASS} />
-      ))}
-      <path d={CAT_OUTLINE_PATH} className={OUTLINE_CLASS} />
+      <use href={CAT_SPRITE.face} />
+      <use href={CAT_SPRITE.lines} className={OUTLINE_CLASS} />
     </svg>
   );
 }

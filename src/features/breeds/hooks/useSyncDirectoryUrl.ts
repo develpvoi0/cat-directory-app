@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { saveDirectoryUrl } from "../utils/directory-url-storage";
 
 type Params = { query: string; page: number };
 
@@ -15,5 +16,6 @@ export function useSyncDirectoryUrl({ query, page }: Params) {
     if (url.href !== window.location.href) {
       window.history.replaceState(null, "", url);
     }
+    saveDirectoryUrl(url.search);
   }, [query, page]);
 }

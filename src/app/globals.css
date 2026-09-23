@@ -90,3 +90,8 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+::view-transition-group(*) {
+  animation-duration: 380ms;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
