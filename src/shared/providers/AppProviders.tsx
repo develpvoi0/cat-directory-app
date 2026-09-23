@@ -1,7 +1,12 @@
 "use client";
 
+import { ThemeProvider } from "next-themes";
 import { QueryProvider } from "./QueryProvider";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
-  return <QueryProvider>{children}</QueryProvider>;
+  return (
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+      <QueryProvider>{children}</QueryProvider>
+    </ThemeProvider>
+  );
 }

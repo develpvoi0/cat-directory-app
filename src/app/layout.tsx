@@ -46,20 +46,17 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor:[
-    {media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    {media: "(prefers-color-scheme: dark)", color: "#0a0a0a" }
+    {media: "(prefers-color-scheme: light)", color: "#f3f5f6" },
+    {media: "(prefers-color-scheme: dark)", color: "#0e1419" }
   ],
   width: "device-width",
   initialScale: 1
 }
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="es"
-      className={`${display.variable} ${body.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
+    <html lang="es" suppressHydrationWarning className={`${display.variable} ${body.variable}`}>
+      <body className="antialiased">
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

@@ -18,7 +18,9 @@ function makeQueryClient() {
         staleTime: 5 * 60 * 1000, 
         gcTime: 30 * 60 * 1000,
         refetchOnWindowFocus: false,
-        retry: (failureCount, error) => isRetryableError(error) && failureCount < MAX_RETRIES,
+        retry: environmentManager.isServer()
+          ? false
+          : (failureCount, error) => isRetryableError(error) && failureCount < MAX_RETRIES,
         retryDelay,
       },
     },
