@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Atkinson_Hyperlegible, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "@/shared/providers/AppProviders";
+import { CatSprite } from "@/shared/ui/CatSprite";
 
 const display = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -19,6 +20,7 @@ const body = Atkinson_Hyperlegible({
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default:"Cat Directory | Directorio de razas de gatos",
     template: "%s | Cat Directory",
@@ -57,6 +59,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="es" suppressHydrationWarning className={`${display.variable} ${body.variable}`}>
       <body className="antialiased">
+        <CatSprite />
         <AppProviders>{children}</AppProviders>
       </body>
     </html>
